@@ -46,7 +46,7 @@ I then used the output `objpoints` and `imgpoints` to compute the camera calibra
 
 
 I applied this distortion correction to the test image using the `cv2.undistort()` function and obtained this result: 
-![undist.png](attachment:undist.png)
+![/output_images/undist.png](attachment:undist.png)
 
 ---
 
