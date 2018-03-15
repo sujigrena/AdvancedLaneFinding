@@ -46,7 +46,7 @@ I then used the output `objpoints` and `imgpoints` to compute the camera calibra
 
 
 I applied this distortion correction to the test image using the `cv2.undistort()` function and obtained this result: 
-![/output_images/undist.png](attachment:undist.png)
+![/output_images/undist.png](./output_images/undist.png)
 
 ---
 
@@ -55,7 +55,7 @@ I applied this distortion correction to the test image using the `cv2.undistort(
 #### 1. Provide an example of a distortion-corrected image.
 
 To demonstrate this step, I will describe how I apply the distortion correction to one of the test images like this one:
-![dist_res.png](attachment:dist_res.png)
+![dist_res.png](./output_images/dist_res.png)
 
 I've got the correction matrix and the distance from the center of the undistorted image using camera calibration previously. Then used the same to undistort all the frames in the video just as the above image. Distortion-correction seems to have reduced the unneccesary curvature of the image in the edges.
 
@@ -72,69 +72,69 @@ Here are the following color and gradient threshold and combinations I tried to 
 
 As we could see this is slightly noisy, we are able to detect shadows along with the lane lines. The better results were obtained with the lower threshold 30 and 90 and the values below or above this either detects too many features or not detects any usable features.
 
-![magni.png](attachment:magni.png)
+![magni.png](./output_images/magni.png)
 
 
 * #### Direction threshold
 
 Direction threshold between threshold 0.7 and 1.3 with the kernel size seems to detect the lane lines better with tolerable noise. This could be combined with other channels to remove the noise.
 
-![direction.png](attachment:direction.png)
+![direction.png](./output_images/direction.png)
 
 
 * #### Magnitue and Direction Combination
 
 Then I combined the magnitude and direction thresholds to get the below result. Using this combination doesn't seem to detect all the lane lines across the entire video.
 
-![magdir.png](attachment:magdir.png)
+![magdir.png](./output_images/magdir.png)
 
 * #### S Channel threshold
 
 Next I used the S channel of the HLS representation. I thresholded the pixel values between 200 and 255 and the result was as below and seemed the optimal range. The other range thresholds were either too noisy or didn't detect lane line at all.
 
-![schannel.png](attachment:schannel.png)
+![schannel.png](./output_images/schannel.png)
 
 * #### R Channel threshold
 
 Next I used the R channel of the RGB representation. I thresholded the pixel values between 170 and 255 and the result was as below and seemed the optimal range. The other range thresholds were either too noisy or didn't detect lane line at all.
 
-![rchannel.png](attachment:rchannel.png)
+![rchannel.png](./output_images/rchannel.png)
 
 * #### Magnitude, Direction and S channel Combination
 
 Then I tried to combine the magnitue, direction and s channel thresholds. This combination seemed to work well except for the shaded region.
 
-![magdirsth.png](attachment:magdirsth.png)
+![magdirsth.png](./output_images/magdirsth.png)
 
 * #### Magnitue, Direction and R channel Combination
 
 This combination seems to be too noisy to detect lane lines.
 
-![magdirandr.png](attachment:magdirandr.png)
+![magdirandr.png](./output_images/magdirandr.png)
 
 * #### Magnitue, Direction, S Channel and R Channel Combination
 
 Then I combined the R and S channels with the magnitude and direction channels. Again this combination was too noisy.
 
-![magdirsandr.png](attachment:magdirsandr.png)
+![magdirsandr.png](./output_images/magdirsandr.png)
 
 * #### Sobel X and S Channel Combination
 
 As the magnitude and direction combination along with other color thresholds didn't work, I switced to sobel x and S channel combination. This proved to the so far best solution except the noise in the shaded region.
 
-![sobelxands.png](attachment:sobelxands.png)
+![sobelxands.png](./output_images/sobelxands.png)
 
 * #### H Channel 
 
 As we know the H channel doesn't respond to color strength, I chose to threshold the H channel in the range 20 and 100 which was the optimal range to detect lane lines. But this was not sufficient to detect all the lane lines across the video.
 
-![hchannel.png](attachment:hchannel.png)
+![hchannel.png](./output_images/hchannel.png)
 
 * #### Sobel X and H Channel
 
 Finally I combined the X and S channel to get the desired output with lanes and without noise.
 
-![combined.png](attachment:combined.png)
+![combined.png](./output_images/combined.png)
 
 
 ---
@@ -169,7 +169,7 @@ This resulted in the following source and destination points:
 
 I verified that my perspective transform was working as expected by drawing the `src` and `dst` points onto a test image and its warped counterpart to verify that the lines appear parallel or respresent the exact turn in the warped image.
 
-![perspec.png](attachment:perspec.png)
+![perspec.png](./output_images/perspec.png)
 
 ---
 
@@ -177,11 +177,11 @@ I verified that my perspective transform was working as expected by drawing the 
 
 The code to identify the lane-line pixels is present in the 8th code cell of the `AdvancedLaneFinding.ipynb` inside the method called SlidingWindow. I've used the sliding window logic given in the course material. The idea behind this logic is actually to find the pixels which have the maximum intensity in the lower half of the image ( as lane lines are present only in this region). We divide the lower half of the images in to n regions of desired value n. Here I've used 9 as n value. Then identify the two lanes by using histogram to find the actual starting point of the lane lines from the bottom. Histogram gives 2 peaks as we have filtered out all other pixels from this region. Then taking this as the base points, we further divide the region into left and right sides. Then use windows iteratively to gather pixels from the n regions we have identified in the step1. The sliding window searches for the pixels count greater than a given threshold (50 in my case). If no such number of pixels are identified then it takes the previous window values as the pixel count of this value. Once we have identified the pixels, we get the x and y values for the left and right side respectively. Then finally use the gathered points to create a 2nd order equation to fit the identified points and plot it as below. 
 
-![histogram.png](attachment:histogram.png)
+![histogram.png](./output_images/histogram.png)
 
-![slidingwindow.png](attachment:slidingwindow.png)
+![slidingwindow.png](./output_images/slidingwindow.png)
 
-![slid.png](attachment:slid.png)
+![slid.png](./output_images/slid.png)
 
 ---
 
@@ -196,7 +196,7 @@ In the code cell 7 of  my `AdvancedLaneFinding.ipynb` I've created a method call
 I've added this part in the SlidingWindow() method in the 8th cell of my `AdvancedLaneFinding.ipynb`. After finding the 2nd order polynomial equation for the left and right lanes, we use the equation and identified points to find the coordinates required to plot a polygon. Then create a filled polygon image with the identified polygon end points and super impose on the original image.
 
 
-![res.png](attachment:res.png)
+![res.png](./output_images/res.png)
 
 ---
 
